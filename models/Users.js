@@ -26,6 +26,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a password'],
         minlegth: 6,
+        match: [
+            /^[a-zA-Z0-9]/
+        ],
         select: false
     },
     resetPasswordToken: String,
