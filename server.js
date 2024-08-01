@@ -1,6 +1,10 @@
-const path = require('path');
-const express = require('express');
 const dotenv = require('dotenv');
+
+// Load env vars
+const path = require('path');
+dotenv.config({path: './config/config.env'});
+
+const express = require('express');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
@@ -8,17 +12,12 @@ const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 
 
-// Load env vars 
-dotenv.config({path: './config/config.env'});
-
-
 // connect to database
 connectDB();
 
 
 // Route files
-const bootcamps = require('./routes/bootcamps');
-const courses = require('./routes/courses');
+const cements = require('./routes/cements');
 const auth = require('./routes/auth');
 
 const app = express();
@@ -41,9 +40,8 @@ app.use(fileupload());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routers
-app.use('/api/v1/bootcamps', bootcamps);
-app.use('/api/v1/courses', courses);
-app.use('/api/v1/auth', auth);
+app.use('/api/cements', cements);
+app.use('/api/auth', auth);
 
 app.use(errorHandler);
 
