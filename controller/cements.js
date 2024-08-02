@@ -5,17 +5,17 @@ const Cement = require('../models/Cements');
 
 
 // @desc    Get all cements
-// @route   GET /api/v1/cements
+// @route   GET /api/cements
 // @access  Public
 exports.getCements = asyncHandler(async (req, res, next) => {
-    const cement = await Cement.findAll()
+    const cement = await Cement.find()
 
     res.status(200).json({ success: true, data: cement });
 });
 
 
 // @desc    Get single cement
-// @route   GET /api/v1/cements/:id
+// @route   GET /api/cements/:id
 // @access  Public
 exports.getCement = asyncHandler(async (req, res, next) => {
 
@@ -33,7 +33,7 @@ exports.getCement = asyncHandler(async (req, res, next) => {
 
 
 // @desc    Create new cement
-// @route   POST /api/v1/cements/:id
+// @route   POST /api/cement
 // @access  Public
 exports.createCement = asyncHandler(async (req, res, next) => {
     // Add user to req.body

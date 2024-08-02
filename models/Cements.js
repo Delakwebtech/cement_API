@@ -22,11 +22,6 @@ const CementSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    },
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Users',
-        required: true
     }
 }, 
 {
