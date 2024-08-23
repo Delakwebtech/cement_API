@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+const cors = require('cors');
 
 
 // connect to database
@@ -22,6 +23,9 @@ const cements = require('./routes/cements');
 const auth = require('./routes/auth');
 
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Body Perser
 app.use(express.json());
