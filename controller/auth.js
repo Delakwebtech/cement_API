@@ -17,6 +17,62 @@ exports.register = asyncHandler(async (req, res, next) => {
     password,
   });
 
+  // Generate email verification token
+  const verificationToken = user.getEmailVerificationToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  // Create verification URL
+  const verificationUrl = `${req.protocol}://${req.get(
+    'host'
+  )}/api/auth/verifyemail/${verificationToken}`;
+
+  const message = `Please verify your email by clicking the following link: \n\n ${verificationUrl}`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Email Verification',
+      message,
+    });
+
+    res.status(200).json({ success: true, data: 'Verification email sent' });
+  } catch (err) {
+    console.log(err);
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorResponse('Email could not be sent', 500));
+  }
+});
+
+// @desc    Verify Email
+// @route   GET /api/auth/verifyemail/:token
+// @access  Public
+exports.verifyEmail = asyncHandler(async (req, res, next) => {
+  const emailVerificationToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    emailVerificationToken,
+    emailVerificationExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid or expired token', 400));
+  }
+
+  // Set email as verified
+  user.isEmailVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpire = undefined;
+
+  await user.save();
+
   sendTokenResponse(user, 200, res);
 });
 

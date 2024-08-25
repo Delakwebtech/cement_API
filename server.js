@@ -21,6 +21,7 @@ connectDB();
 // Route files
 const cements = require('./routes/cements');
 const auth = require('./routes/auth');
+const order = require('./routes/order');
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Mount routers
 app.use('/api/cements', cements);
 app.use('/api/auth', auth);
+app.use('/api/order', order);
 
 app.use(errorHandler);
 
