@@ -1,7 +1,7 @@
-const path = require('path');
-const ErrorResponse = require('../utils/errorResponse');
-const asyncHandler = require('../middleware/async');
-const Cement = require('../models/Cements');
+const path = require("path");
+const ErrorResponse = require("../utils/errorResponse");
+const asyncHandler = require("../middleware/async");
+const Cement = require("../models/Cements");
 
 // @desc    Get all cements
 // @route   GET /api/cements
@@ -28,14 +28,14 @@ exports.getCement = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    Create new cement
-// @route   POST /api/cement
+// @route   POST /api/cements
 // @access  Public
 exports.createCement = asyncHandler(async (req, res, next) => {
   // Add user to req.body
   req.body.user = req.user.id;
 
   // Only admin can add new cement
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== "admin") {
     return next(
       new ErrorResponse(
         `The user with id ${req.user.id} is not authorized to add cement`,
@@ -65,7 +65,7 @@ exports.updateCement = asyncHandler(async (req, res, next) => {
   }
 
   // Make sure user is the bootcamp owner
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== "admin") {
     return next(
       new ErrorResponse(
         `User ${req.params.id} is not authorized to update this cement`,
@@ -95,7 +95,7 @@ exports.deleteCement = asyncHandler(async (req, res, next) => {
   }
 
   // Make sure user is an admin
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== "admin") {
     return next(
       new ErrorResponse(
         `User ${req.params.id} is not authorized to delete this cement`,
@@ -122,7 +122,7 @@ exports.cementPhotoUpload = asyncHandler(async (req, res, next) => {
   }
 
   // Make sure user is an admin
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== "admin") {
     return next(
       new ErrorResponse(
         `User ${req.params.id} is not authorized to update this cement`,
@@ -132,14 +132,14 @@ exports.cementPhotoUpload = asyncHandler(async (req, res, next) => {
   }
 
   if (!req.files) {
-    return next(new ErrorResponse('Please upload a file', 400));
+    return next(new ErrorResponse("Please upload a file", 400));
   }
 
   const file = req.files.file;
 
   // Make sure the image is photo
-  if (!file.mimetype.startsWith('image')) {
-    return next(new ErrorResponse('Please upload an image file', 400));
+  if (!file.mimetype.startsWith("image")) {
+    return next(new ErrorResponse("Please upload an image file", 400));
   }
 
   // Check filesize
@@ -157,7 +157,7 @@ exports.cementPhotoUpload = asyncHandler(async (req, res, next) => {
 
   file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
     if (err) {
-      return next(new ErrorResponse('Error with file upload', 500));
+      return next(new ErrorResponse("Error with file upload", 500));
     }
 
     await Cement.findByIdAndUpdate(req.params.id, { photo: file.name });

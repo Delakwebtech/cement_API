@@ -15,6 +15,10 @@ const CementSchema = new mongoose.Schema({
         required: [true, 'Please add a description'],
         maxlength: [500, 'Description can not be more than 500 characters']
     },
+    price: {
+        type: Number,
+        required: [true, 'Please add a price']
+    },
     photo: {
         type: String,
         default: 'no-photo.jpg'
