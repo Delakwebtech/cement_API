@@ -18,11 +18,29 @@ const CementSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Please add price']
     },
-    discount: {
-        type: Number,
-        default: 0,
-        min: [0, 'Discount cannot be less than 0%'],
-        max: [100, 'Discount cannot be more than 100%']
+    discountQuantity1: {
+        quantity: {
+            type: Number,
+            required: [true, 'Please specify the quantity']
+        },
+        discount: {
+            type: Number,
+            default: 0,
+            min: [0, 'Discount cannot be less than 0%'],
+            max: [100, 'Discount cannot be more than 100%']
+        }
+    },
+    discountQuantity2: {
+        quantity: {
+            type: Number,
+            required: [true, 'Please specify the quantity']
+        },
+        discount: {
+            type: Number,
+            default: 0,
+            min: [0, 'Discount cannot be less than 0%'],
+            max: [100, 'Discount cannot be more than 100%']
+        }
     },
     photo: {
         type: String,
@@ -44,9 +62,15 @@ CementSchema.pre('save', function(next){
     next();
 });
 
-// Calculate discounted price
-CementSchema.virtual('discountedPrice').get(function() {
-    const discountAmount = (this.price * this.discount) / 100;
+// Calculate discounted price for quantity 1
+CementSchema.virtual('discountedPrice1').get(function() {
+    const discountAmount = (this.price * this.discountQuantity1.discount) / 100;
+    return this.price - discountAmount;
+});
+
+// Calculate discounted price for quantity 2
+CementSchema.virtual('discountedPrice2').get(function() {
+    const discountAmount = (this.price * this.discountQuantity2.discount) / 100;
     return this.price - discountAmount;
 });
 
