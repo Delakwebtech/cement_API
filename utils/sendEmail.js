@@ -1,27 +1,24 @@
-const nodemailer = require("nodemailer");
+const postmark = require("postmark");
 
 const sendEmail = async (options) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    auth: {
-      user: process.env.SMTP_EMAIL,
-      pass: process.env.SMTP_PASSWORD
-    }
-  });
+  // Postmark client with server API token
+  const client = new postmark.ServerClient(process.env.POSTMARK_API_TOKEN);
 
-  // send mail with defined transport object
+  // Email message object
   const message = {
-    from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
-    to: options.email,
-    subject: options.subject,
-    text: options.message
+    From: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
+    To: options.email,
+    Subject: options.subject,
+    TextBody: options.message
   };
 
-  const info = await transporter.sendMail(message);
-
-  console.log("Message sent: %s", info.messageId);
-  
-}
+  // Send the email using Postmark
+  try {
+    const result = await client.sendEmail(message);
+    console.log("Email sent: %s", result.MessageID);
+  } catch (error) {
+    console.error("Error sending email: %s", error.message);
+  }
+};
 
 module.exports = sendEmail;
