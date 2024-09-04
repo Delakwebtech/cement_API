@@ -51,7 +51,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Mount routers
 app.use('/api/cements', cements);
 app.use('/api/auth', auth);
-app.use('/api/order', order);
+app.use('/api', order);
 
 app.use(errorHandler);
 
