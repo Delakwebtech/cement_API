@@ -8,13 +8,13 @@ const sendEmail = async (options) => {
   const message = {
     From: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
     To: options.email,
-    Subject: options.subject,
-    TextBody: options.message
+    TemplateId: options.TemplateId,
+    TemplateModel: options.TemplateModel
   };
 
   // Send the email using Postmark
   try {
-    const result = await client.sendEmail(message);
+    const result = await client.sendEmailWithTemplate(message);
     console.log("Email sent: %s", result.MessageID);
   } catch (error) {
     console.error("Error sending email: %s", error.message);

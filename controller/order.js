@@ -66,17 +66,28 @@ exports.placeOrderFromCart = asyncHandler(async (req, res, next) => {
   cart.items = [];
   await cart.save();
 
-  // Send order confirmation email
-  const message = `Your order has been successfully placed. Order details:\n\nItems: ${cart.items
-    .map((item) => `${item.name} (x${item.quantity})`)
-    .join(', ')}\n\nTotal Price: $${totalPrice}`;
+  // Prepare cart items for email
+  const formattedCartItems = cart.items.map(item => ({
+    description: item.name,
+    amount: (item.price * item.quantity).toFixed(2),
+  }));
 
+  // Send order confirmation email
   try {
     await sendEmail({
       email: req.user.email,
-      subject: 'Order Confirmation',
-      message,
+      TemplateId: 37209866,
+      TemplateModel: {
+        userName: req.user.name,
+        totalPrice: totalPrice.toFixed(2),
+        cartItems: [
+          { description: 'Test Item 1', amount: '10.00' },
+          { description: 'Test Item 2', amount: '20.00' },
+        ],
+      }
     });
+    
+    console.log('Cart:', cart.items);
 
     res.status(200).json({
       success: true,
@@ -89,3 +100,4 @@ exports.placeOrderFromCart = asyncHandler(async (req, res, next) => {
     );
   }
 });
+
