@@ -1,8 +1,8 @@
-const Order = require('../models/Order');
-const Cart = require('../models/Cart');
-const asyncHandler = require('../middleware/async');
-const sendEmail = require('../utils/sendEmail');
-const ErrorResponse = require('../utils/errorResponse');
+const Order = require("../models/Order");
+const Cart = require("../models/Cart");
+const asyncHandler = require("../middleware/async");
+const sendEmail = require("../utils/sendEmail");
+const ErrorResponse = require("../utils/errorResponse");
 
 // @desc    Add items to Cart
 // @route   POST /api/cart
@@ -35,7 +35,7 @@ exports.getCart = asyncHandler(async (req, res, next) => {
   const cart = await Cart.findOne({ user: req.user.id });
 
   if (!cart) {
-    return next(new ErrorResponse('No cart found for this user', 404));
+    return next(new ErrorResponse("No cart found for this user", 404));
   }
 
   res.status(200).json({
@@ -48,26 +48,25 @@ exports.getCart = asyncHandler(async (req, res, next) => {
 // @route   POST /api/orders
 // @access  Private
 exports.placeOrderFromCart = asyncHandler(async (req, res, next) => {
-  const cart = await Cart.findOne({ user: req.user.id });
+  const carts = await Cart.findOne({ user: req.user.id });
 
-  if (!cart || cart.items.length === 0) {
-    return next(new ErrorResponse('No items in cart to place an order', 400));
+  if (!carts || carts.items.length === 0) {
+    return next(new ErrorResponse("No items in cart to place an order", 400));
   }
 
-  const totalPrice = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalPrice = carts.items.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   const order = await Order.create({
     user: req.user.id,
-    items: cart.items,
+    items: carts.items,
     totalPrice,
   });
 
-  // Clear the cart after placing the order
-  cart.items = [];
-  await cart.save();
-
   // Prepare cart items for email
-  const formattedCartItems = cart.items.map(item => ({
+  const formattedCartItems = carts.items.map((item) => ({
     description: item.name,
     amount: (item.price * item.quantity).toFixed(2),
   }));
@@ -80,14 +79,13 @@ exports.placeOrderFromCart = asyncHandler(async (req, res, next) => {
       TemplateModel: {
         userName: req.user.name,
         totalPrice: totalPrice.toFixed(2),
-        cartItems: [
-          { description: 'Test Item 1', amount: '10.00' },
-          { description: 'Test Item 2', amount: '20.00' },
-        ],
-      }
+        cartItems: formattedCartItems
+      },
     });
-    
-    console.log('Cart:', cart.items);
+
+    // Clear the cart after placing the order
+    carts.items = [];
+    await carts.save();
 
     res.status(200).json({
       success: true,
@@ -96,8 +94,7 @@ exports.placeOrderFromCart = asyncHandler(async (req, res, next) => {
   } catch (err) {
     console.log(err);
     return next(
-      new ErrorResponse('Order placed, but email could not be sent', 500)
+      new ErrorResponse("Order placed, but email could not be sent", 500)
     );
   }
 });
-
