@@ -27,13 +27,14 @@ exports.register = asyncHandler(async (req, res, next) => {
     'host'
   )}/api/auth/verifyemail/${verificationToken}`;
 
-  const message = `Please verify your email by clicking the following link: \n\n ${verificationUrl}`;
-
   try {
     await sendEmail({
       email: user.email,
-      subject: 'Email Verification',
-      message,
+      TemplateId: 37222615,
+      TemplateModel: {
+        name: user.name,
+        verificationUrl: verificationUrl
+      },
     });
 
     res.status(200).json({ success: true, data: 'Verification email sent' });
@@ -173,15 +174,15 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     'host'
   )}/api/auth/resetpassword/${resetToken}`;
 
-  const message = `You are receiving this email because you (or someone else) has requested the reset of 
-    password. Please make a put request to: \n\n ${resetUrl}`;
-
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Password reset token',
-      message,
-    });
+    try {
+      await sendEmail({
+        email: user.email,
+        TemplateId: 37222617,
+        TemplateModel: {
+          name: user.name,
+          resetUrl: resetUrl
+        },
+      });
 
     res.status(200).json({ success: true, data: 'Email sent' });
   } catch (err) {
