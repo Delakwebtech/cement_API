@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const CartItemSchema = new mongoose.Schema({
-  cementId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cement',
-    required: true,
-  },
   name: {
     type: String,
     required: true,
