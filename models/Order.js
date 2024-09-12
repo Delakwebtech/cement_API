@@ -17,11 +17,11 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  status: {
-    type: String,
-    enum: ['pending', 'completed', 'cancelled'],
-    default: 'pending',
-  },
+  // status: {
+  //   type: String,
+  //   enum: ['pending', 'completed', 'cancelled'],
+  //   default: 'pending',
+  // },
   createdAt: {
     type: Date,
     default: Date.now,
