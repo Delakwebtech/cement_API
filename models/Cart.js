@@ -30,7 +30,7 @@ const CartItemSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function(v) {
-        return /^0[789]\d{9}$/.test(v); // Nigerian phone number regex
+        return /^0[789]\d{9}$/.test(v); 
       },
       message: props => `${props.value} is not a valid Nigerian phone number!`
     }
